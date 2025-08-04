@@ -28,6 +28,10 @@
             box-sizing: border-box;
         }
         
+        html, body {
+            overscroll-behavior-y: contain;
+        }
+        
         html {
             font-size: 16px;
         }
@@ -39,13 +43,13 @@
             align-items: center;
             justify-content: center;
             padding: 1rem;
-            /* overflow: hidden; <-- REMOVED THIS LINE TO FIX SCROLLING */
+            overflow-x: hidden;
             background-color: var(--dark-bg);
             color: var(--white);
         }
         
         .aurora-bg {
-            position: absolute;
+            position: fixed;
             top: -50%;
             left: -50%;
             width: 200%;
@@ -121,6 +125,22 @@
             margin-bottom: 2rem;
         }
         
+        /* --- New Sparkle Text Style --- */
+        .sparkle-text {
+            font-weight: 500;
+            background: linear-gradient(90deg, var(--glow-pink), var(--glow-blue), var(--glow-purple));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: sparkle-glow 3s infinite ease-in-out;
+        }
+
+        @keyframes sparkle-glow {
+            0%, 100% { text-shadow: 0 0 8px rgba(255, 175, 204, 0.5); }
+            50% { text-shadow: 0 0 16px rgba(173, 216, 230, 0.8); }
+        }
+        /* ----------------------------- */
+
         .header {
             text-align: center;
             margin-bottom: 1.5rem;
@@ -325,7 +345,7 @@
                 <p>
                     เราจะทำการเก็บข้อมูลที่ท่านกรอก (รหัสพนักงาน, ชื่อ, ชื่อผู้ใช้ และรหัสผ่าน)
                     เพื่อใช้ในการยืนยันตัวตนและเข้าใช้งานระบบภายในของบริษัทเท่านั้น
-                    ข้อมูลของท่านจะถูกเก็บรักษาอย่างปลอดภัย
+                    ข้อมูลของท่านจะถูกเก็บรักษาอย่างปลอดภัย <span class="sparkle-text">จาก โฟเองงับ</span>
                 </p>
                 <button id="nextBtn" class="submit-btn">รับทราบและดำเนินการต่อ</button>
             </div>
