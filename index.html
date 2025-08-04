@@ -39,7 +39,7 @@
             align-items: center;
             justify-content: center;
             padding: 1rem;
-            overflow: hidden;
+            /* overflow: hidden; <-- REMOVED THIS LINE TO FIX SCROLLING */
             background-color: var(--dark-bg);
             color: var(--white);
         }
@@ -409,7 +409,6 @@
             messageText.textContent = text;
             messageBox.style.display = 'block';
             
-            // Recalculate container height when message appears
             container.style.height = `${step2.scrollHeight}px`;
 
             if (type === 'success') {
@@ -419,7 +418,6 @@
 
         function hideMessage() {
             messageBox.style.display = 'none';
-            // Recalculate height when message is hidden
             if (container.classList.contains('show-step-2')) {
                 container.style.height = `${step2.scrollHeight}px`;
             }
