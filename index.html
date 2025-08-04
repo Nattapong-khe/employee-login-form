@@ -3,98 +3,172 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบเก็บข้อมูลล็อกอินพนักงาน</title>
+    <title>ระบบเก็บข้อมูลล็อกอิน</title>
+    <!-- เพิ่มฟอนต์น่ารักๆ จาก Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Mitr:wght@300;400;500&display=swap" rel="stylesheet">
+    
     <style>
+        :root {
+            --pink: #ffafcc;
+            --blue: #a2d2ff;
+            --purple: #cdb4db;
+            --white: #ffffff;
+            --dark-text: #555;
+            --light-text: #777;
+            --border-color: #ededed;
+            --success: #34a853;
+            --error: #ea4335;
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
         
+        html {
+            font-size: 16px;
+        }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Mitr', sans-serif;
+            background: linear-gradient(135deg, var(--pink) 0%, var(--blue) 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 20px;
+            padding: 1rem;
+            overflow-x: hidden;
         }
         
         .container {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            padding: 40px;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(15px);
+            border-radius: 25px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            padding: 2rem 1.5rem;
             width: 100%;
-            max-width: 500px;
-            backdrop-filter: blur(10px);
+            max-width: 420px;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         
         .header {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 1.5rem;
         }
         
         .header h1 {
-            color: #333;
-            font-size: 28px;
-            margin-bottom: 10px;
+            color: var(--dark-text);
+            font-size: 2rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
         }
         
         .header p {
-            color: #666;
-            font-size: 16px;
+            color: var(--light-text);
+            font-size: 1rem;
         }
         
+        /* --- Floating Label Styles --- */
         .form-group {
-            margin-bottom: 25px;
+            position: relative;
+            margin-bottom: 1.5rem;
         }
-        
-        label {
-            display: block;
-            margin-bottom: 8px;
-            color: #333;
-            font-weight: 600;
-            font-size: 14px;
-        }
-        
-        input {
+
+        .form-input {
             width: 100%;
-            padding: 15px;
-            border: 2px solid #e1e5e9;
-            border-radius: 10px;
-            font-size: 16px;
-            transition: all 0.3s ease;
-            background: #f8f9fa;
+            padding: 14px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            font-size: 1rem;
+            font-family: 'Mitr', sans-serif;
+            transition: all 0.2s ease;
+            background: #f9f9f9;
+            color: var(--dark-text);
+        }
+
+        .form-label {
+            position: absolute;
+            top: 15px;
+            left: 17px;
+            color: var(--light-text);
+            pointer-events: none;
+            transition: all 0.2s ease;
+            background-color: #f9f9f9;
+            padding: 0 5px;
+        }
+
+        .form-input:focus + .form-label,
+        .form-input:not(:placeholder-shown) + .form-label {
+            top: -10px;
+            left: 15px;
+            font-size: 0.8rem;
+            color: var(--purple);
         }
         
-        input:focus {
+        .form-input:focus {
             outline: none;
-            border-color: #667eea;
-            background: white;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+            border-color: var(--purple);
+            background: var(--white);
         }
-        
+        /* --------------------------- */
+
+        /* --- Password Validation Icon --- */
+        .password-wrapper {
+            position: relative;
+        }
+        .validation-icon {
+            position: absolute;
+            top: 15px;
+            right: 16px;
+            font-size: 1.2rem;
+            opacity: 0;
+            transform: scale(0.5);
+            transition: all 0.2s ease;
+        }
+        .validation-icon.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+        .validation-icon.valid { color: var(--success); }
+        .validation-icon.invalid { color: var(--error); }
+        /* ------------------------------ */
+
         .submit-btn {
             width: 100%;
             padding: 15px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(45deg, var(--purple), var(--pink));
             color: white;
             border: none;
-            border-radius: 10px;
-            font-size: 18px;
-            font-weight: 600;
+            border-radius: 15px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            font-family: 'Mitr', sans-serif;
             cursor: pointer;
-            transition: all 0.3s ease;
-            margin-top: 10px;
+            transition: all 0.2s ease;
+            margin-top: 0.5rem;
+            box-shadow: 0 5px 15px rgba(205, 180, 219, 0.6);
         }
         
         .submit-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(205, 180, 219, 0.8);
         }
+
+        /* --- Mobile Tap Effect --- */
+        .submit-btn:active {
+            transform: translateY(0px) scale(0.98);
+            box-shadow: 0 2px 10px rgba(205, 180, 219, 0.8);
+        }
+        /* ------------------------- */
         
         .submit-btn:disabled {
             opacity: 0.6;
@@ -103,61 +177,44 @@
         }
         
         .security-info {
-            background: #e8f5e8;
-            border: 1px solid #4caf50;
-            border-radius: 10px;
-            padding: 15px;
-            margin-bottom: 25px;
-            font-size: 14px;
-            color: #2e7d32;
+            background: rgba(205, 180, 219, 0.2);
+            border-radius: 15px;
+            padding: 0.8rem 1rem;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+            color: #8c5d9e;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
         .security-info .icon {
-            display: inline-block;
-            margin-right: 8px;
-            font-size: 16px;
+            margin-right: 10px;
+            font-size: 1.2rem;
         }
         
-        .loading {
+        .loading, .success-message, .error-message {
             display: none;
+            padding: 1rem;
+            border-radius: 15px;
             text-align: center;
-            margin-top: 20px;
+            margin-top: 1rem;
+            animation: fadeIn 0.3s;
         }
-        
+
+        .loading p { margin-top: 10px; color: var(--light-text); }
         .spinner {
-            width: 40px;
-            height: 40px;
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #667eea;
+            width: 30px; height: 30px;
+            border: 3px solid var(--blue);
+            border-top: 3px solid var(--pink);
             border-radius: 50%;
             animation: spin 1s linear infinite;
-            margin: 0 auto 15px;
+            margin: 0 auto;
         }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        .success-message {
-            display: none;
-            background: #e8f5e8;
-            color: #2e7d32;
-            padding: 20px;
-            border-radius: 10px;
-            text-align: center;
-            margin-top: 20px;
-        }
-        
-        .error-message {
-            display: none;
-            background: #ffebee;
-            color: #c62828;
-            padding: 20px;
-            border-radius: 10px;
-            text-align: center;
-            margin-top: 20px;
-        }
+        .success-message { background: #e0f8e9; color: var(--success); }
+        .error-message { background: #ffebee; color: var(--error); }
     </style>
 </head>
 <body>
@@ -169,28 +226,34 @@
         
         <div class="security-info">
             <span class="icon">🛡️</span>
-            <strong>หมายเหตุ:</strong> ข้อมูลของคุณจะถูกเก็บอย่างปลอดภัยสำหรับใช้ในระบบภายในบริษัท
+            <strong>หมายเหตุ:</strong> ข้อมูลของคุณจะถูกเก็บอย่างปลอดภัย
         </div>
         
         <form id="loginForm">
             <div class="form-group">
-                <label for="employeeId">รหัสพนักงาน (Ex. KG)</label>
-                <input type="text" id="employeeId" name="employeeId" required>
+                <input type="text" id="employeeId" name="employeeId" class="form-input" placeholder=" " required>
+                <label for="employeeId" class="form-label">รหัสพนักงาน (Ex. KG)</label>
             </div>
             
             <div class="form-group">
-                <label for="fullName">ชื่อ-นามสกุล</label>
-                <input type="text" id="fullName" name="fullName" required>
+                <input type="text" id="fullName" name="fullName" class="form-input" placeholder=" " required>
+                <label for="fullName" class="form-label">ชื่อ-นามสกุล</label>
             </div>
             
             <div class="form-group">
-                <label for="username">ชื่อผู้ใช้</label>
-                <input type="text" id="username" name="username" required>
+                <input type="text" id="username" name="username" class="form-input" placeholder=" " required>
+                <label for="username" class="form-label">ชื่อผู้ใช้</label>
             </div>
             
-            <div class="form-group">
-                <label for="password">รหัสผ่าน</label>
-                <input type="password" id="password" name="password" required>
+            <div class="form-group password-wrapper">
+                <input type="password" id="password" name="password" class="form-input" placeholder=" " required>
+                <label for="password" class="form-label">รหัสผ่าน</label>
+            </div>
+            
+            <div class="form-group password-wrapper">
+                <input type="password" id="confirmPassword" name="confirmPassword" class="form-input" placeholder=" " required>
+                <label for="confirmPassword" class="form-label">ยืนยันรหัสผ่าน</label>
+                <span id="validationIcon" class="validation-icon"></span>
             </div>
             
             <button type="submit" class="submit-btn" id="submitBtn">
@@ -200,78 +263,97 @@
         
         <div class="loading" id="loading">
             <div class="spinner"></div>
-            <p>กำลังประมวลผลและส่งข้อมูล...</p>
+            <p>กำลังส่งข้อมูลแป๊บนึงน้า...</p>
         </div>
         
         <div class="success-message" id="successMessage">
-            <h3>✅ ส่งข้อมูลสำเร็จ!</h3>
-            <p>ข้อมูลของคุณได้ถูกเก็บอย่างปลอดภัยแล้ว</p>
+            <h3>💖 เรียบร้อย!</h3>
+            <p>ข้อมูลของคุณถูกบันทึกแล้วจ้า</p>
         </div>
         
         <div class="error-message" id="errorMessage">
-            <h3>❌ เกิดข้อผิดพลาด!</h3>
+            <h3>อุ๊ย! เกิดข้อผิดพลาด</h3>
             <p id="errorText">ไม่สามารถส่งข้อมูลได้ กรุณาลองใหม่อีกครั้ง</p>
         </div>
     </div>
 
     <script>
-        // ใส่ URL ที่ได้จากการ Deploy ของคุณที่นี่
         const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbypJ79AZl8J_AAhAwZPCF1FM3XDGgvR-xnCiziaKmq_Y9i6iz6zp99wOFKzblQB6XNxug/exec';
 
-        // จัดการการส่งฟอร์ม
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
+        const form = document.getElementById('loginForm');
+        const passwordInput = document.getElementById('password');
+        const confirmPasswordInput = document.getElementById('confirmPassword');
+        const validationIcon = document.getElementById('validationIcon');
+
+        function validatePassword() {
+            if (passwordInput.value === '' || confirmPasswordInput.value === '') {
+                validationIcon.className = 'validation-icon';
+                return;
+            }
+            if (passwordInput.value === confirmPasswordInput.value) {
+                validationIcon.textContent = '✔';
+                validationIcon.className = 'validation-icon visible valid';
+            } else {
+                validationIcon.textContent = '✖';
+                validationIcon.className = 'validation-icon visible invalid';
+            }
+        }
+
+        passwordInput.addEventListener('input', validatePassword);
+        confirmPasswordInput.addEventListener('input', validatePassword);
+
+        form.addEventListener('submit', function(e) {
             e.preventDefault();
             
             const submitBtn = document.getElementById('submitBtn');
             const loading = document.getElementById('loading');
             const successMessage = document.getElementById('successMessage');
             const errorMessage = document.getElementById('errorMessage');
-            const form = document.getElementById('loginForm');
+            const errorText = document.getElementById('errorText');
             
             successMessage.style.display = 'none';
             errorMessage.style.display = 'none';
             
+            if (passwordInput.value !== confirmPasswordInput.value) {
+                errorText.textContent = 'รหัสผ่านไม่ตรงกันน้า ลองดูอีกทีจ้ะ';
+                errorMessage.style.display = 'block';
+                return;
+            }
+
             submitBtn.disabled = true;
             loading.style.display = 'block';
             
-            try {
-                const formData = new FormData(this);
-                const dataToSend = {
-                    timestamp: new Date().toISOString(),
-                    employeeId: formData.get('employeeId'),
-                    fullName: formData.get('fullName'),
-                    username: formData.get('username'),
-                    password: formData.get('password')
-                };
+            const formData = new FormData(form);
+            const dataToSend = {
+                timestamp: new Date().toISOString(),
+                employeeId: formData.get('employeeId'),
+                fullName: formData.get('fullName'),
+                username: formData.get('username'),
+                password: formData.get('password')
+            };
 
-                // ** การแก้ไข **
-                // เพิ่ม mode: 'no-cors' เพื่อแก้ปัญหาการส่งข้อมูลข้ามโดเมน
-                fetch(GOOGLE_SCRIPT_URL, {
-                    method: 'POST',
-                    mode: 'no-cors', // <--- เพิ่มบรรทัดนี้
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(dataToSend)
-                });
-
-                // เนื่องจากใช้ 'no-cors' เราจะไม่ได้รับการตอบกลับ
-                // จึงแสดงข้อความ "สำเร็จ" ทันทีหลังส่งข้อมูล
-                setTimeout(() => { // ใช้ setTimeout เพื่อให้ผู้ใช้รู้สึกว่ามีการประมวลผลเล็กน้อย
+            fetch(GOOGLE_SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(dataToSend)
+            })
+            .then(() => {
+                setTimeout(() => {
                     loading.style.display = 'none';
                     successMessage.style.display = 'block';
                     form.reset();
+                    validationIcon.className = 'validation-icon';
                     submitBtn.disabled = false;
-                }, 1000); // หน่วงเวลา 1 วินาที
-                
-            } catch (error) {
-                // บล็อกนี้จะทำงานก็ต่อเมื่อมีปัญหาเครือข่ายจริงๆ เช่น ไม่มีอินเทอร์เน็ต
+                }, 1000);
+            })
+            .catch(error => {
                 loading.style.display = 'none';
+                errorText.textContent = 'เกิดข้อผิดพลาดด้านเครือข่าย: ' + error.message;
                 errorMessage.style.display = 'block';
-                document.getElementById('errorText').textContent = 'เกิดข้อผิดพลาดด้านเครือข่าย: ' + error.message;
                 submitBtn.disabled = false;
                 console.error('Error:', error);
-            }
+            });
         });
     </script>
 </body>
