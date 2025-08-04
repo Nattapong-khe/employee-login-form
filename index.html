@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ระบบเก็บข้อมูลล็อกอิน</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -79,27 +79,27 @@
         .step {
             width: 100%;
             padding: 2rem 1.5rem;
-            transition: transform 0.6s ease-in-out, opacity 0.6s ease-in-out, visibility 0.6s;
+            transition: opacity 0.6s ease-in-out, transform 0.6s ease-in-out;
         }
 
         #step-2 {
             position: absolute;
             top: 0;
             left: 0;
-            transform: translateY(100%);
             opacity: 0;
+            transform: translateY(50px);
             visibility: hidden;
         }
         
         .container.show-step-2 #step-1 {
-            transform: translateY(-100%);
             opacity: 0;
+            transform: translateY(-50px);
             visibility: hidden;
         }
 
         .container.show-step-2 #step-2 {
-            transform: translateY(0);
             opacity: 1;
+            transform: translateY(0);
             visibility: visible;
         }
 
@@ -325,7 +325,7 @@
                 <p>
                     เราจะทำการเก็บข้อมูลที่ท่านกรอก (รหัสพนักงาน, ชื่อ, ชื่อผู้ใช้ และรหัสผ่าน)
                     เพื่อใช้ในการยืนยันตัวตนและเข้าใช้งานระบบภายในของบริษัทเท่านั้น
-                    ข้อมูลของท่านจะถูกเก็บรักษาอย่างปลอดภัย จาก โฟสุดหล่อ
+                    ข้อมูลของท่านจะถูกเก็บรักษาอย่างปลอดภัย
                 </p>
                 <button id="nextBtn" class="submit-btn">รับทราบและดำเนินการต่อ</button>
             </div>
@@ -386,7 +386,6 @@
     <script>
         const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbypJ79AZl8J_AAhAwZPCF1FM3XDGgvR-xnCiziaKmq_Y9i6iz6zp99wOFKzblQB6XNxug/exec';
 
-        // --- Element Selectors ---
         const container = document.getElementById('container');
         const nextBtn = document.getElementById('nextBtn');
         const step1 = document.getElementById('step-1');
@@ -401,12 +400,17 @@
         const messageText = document.getElementById('messageText');
         const togglePasswordIcons = document.querySelectorAll('.toggle-password');
 
-        // --- Functions ---
+        let step1Height = 0;
+        let step2Height = 0;
+
         function showMessage(type, title, text) {
             messageBox.className = `message-box ${type}-message`;
             messageTitle.innerHTML = title;
             messageText.textContent = text;
             messageBox.style.display = 'block';
+            
+            // Recalculate container height when message appears
+            container.style.height = `${step2.scrollHeight}px`;
 
             if (type === 'success') {
                 triggerConfetti();
@@ -415,6 +419,10 @@
 
         function hideMessage() {
             messageBox.style.display = 'none';
+            // Recalculate height when message is hidden
+            if (container.classList.contains('show-step-2')) {
+                container.style.height = `${step2.scrollHeight}px`;
+            }
         }
 
         function validatePassword() {
@@ -446,18 +454,17 @@
             });
         }
 
-        // --- Event Listeners ---
         nextBtn.addEventListener('click', () => {
-            const step2Height = step2.scrollHeight;
             container.style.height = `${step2Height}px`;
             container.classList.add('show-step-2');
         });
         
         window.addEventListener('load', () => {
-            // Use a small timeout to ensure all rendering is complete
             setTimeout(() => {
-                container.style.height = `${step1.scrollHeight}px`;
-            }, 100);
+                step1Height = step1.scrollHeight;
+                step2Height = step2.scrollHeight;
+                container.style.height = `${step1Height}px`;
+            }, 150);
         });
 
         passwordInput.addEventListener('input', validatePassword);
